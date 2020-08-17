@@ -19,6 +19,8 @@ var platformsGroup, platformsBreakingGroup;
 
 var platformTemp;
 
+var start,startIMG;
+
 function preload(){
   backgroundIMG = loadImage("Images/Background.png");
   playerIMG = loadImage("Images/BallOrignal.png");
@@ -27,7 +29,9 @@ function preload(){
   platform2Img = loadImage("Images/Platform2.png");
 
   spike1IMG = loadImage("Images/spike1.png");
-  spike2IMG = loadImage("Images/Spikes2.png");
+  spike2IMG = loadImage("Images/spike2.png");
+
+  startIMG = loadImage("Images/start.png");
 
 }
 
@@ -60,6 +64,9 @@ function setup() {
   platformsGroup = new Group();
 
   platformsBreakingGroup = new Group();
+
+  start = createSprite(250,280,10,10);
+  start.addImage("START", startIMG);
   
 }
 
@@ -67,7 +74,7 @@ function draw() {
   background(255,255,255); 
 
     if(gameState === START){
-      if(keyDown("space")){
+      if(mousePressedOver(start)){
         gameState = PLAY;
       }
 
@@ -77,6 +84,8 @@ function draw() {
     else if(gameState === PLAY){
 
       ball.collide(platformTemp);
+
+      startIMG = false;
 
       if(ball.isTouching(platformsGroup)){
         platformsGroup.collide(ball);
@@ -148,7 +157,12 @@ function draw() {
 
     }
     else if(gameState === END){
+       ground.velocityY = 0;
+       ball.velocityX = 0;
+       ball.velocityY = 0;
 
+       platformsGroup.setVelocityYEach(0);
+       platformsBreakingGroup.setVelocityYEach(0);
     }
 
 
@@ -171,7 +185,15 @@ function draw() {
       text("WELCOME", 300, 200);
       text("PRESS THE SPACE BAR KEY", 220,250 );
   }
+
+ if(gameState === END){
+   textSize(20);
+   fill("white");
+   text("GAME OVER", 260, 400);
+   text("PRESS RESTART", 240,450);
+ }
 }
+
 
 function spawnPlatforms(){
     var platform = createSprite(Math.round(random(50,550)),0,10,40);
