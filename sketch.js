@@ -15,11 +15,13 @@ var spike1,spike2,spike3,spike4,spike5,spike6;
 
 var spike1IMG, spike2IMG, spike3IMG, spike4IMG, spike5IMG, spike6IMG;
 
-var platformsGroup, platformsBreakingGroup;
+var platformsGroup, platformsGroup2, platformsBreakingGroup;
 
 var platformTemp;
 
 var start,startIMG;
+
+var restart,restartIMG;
 
 var gameOver, gameOverIMG;
 
@@ -86,7 +88,7 @@ function setup() {
   spike6.scale = 0.3;
 
   platformsGroup = new Group();
-
+  platformsGroup2 = new Group();
   platformsBreakingGroup = new Group();
 
   start = createSprite(270,280,10,10);
@@ -105,6 +107,10 @@ function draw() {
         gameState = PLAY;
       }
 
+      platformsGroup.collide(ball);
+      platformsGroup2.collide(ball);
+      platformsBreakingGroup.collide(ball);
+
       start.visible = true;
 
       ground.velocityY = 0;
@@ -119,15 +125,19 @@ function draw() {
       start.animation = false;
 
       if(ball.isTouching(platformsGroup)){
-        platformsGroup.collide(ball);
+        
         ball.velocityX = 0;
         ball.velocityY = 0;
+
+        platformsGroup.velocityY=4;
       }
        
       if(ball.isTouching(platformsBreakingGroup)){
-        platformsBreakingGroup.collide(ball);
+        
        ball.velocityX = 0;
        ball.velocityY = 0;
+
+       platformsGroup.velocityY=4;
       }
      
        ball.velocityY = ball.velocityY + 0.8;
@@ -140,8 +150,15 @@ function draw() {
           spawnPlatforms();
         }
         else{
-          spawnPlatformsBreaking();
+          if(selectPlatform === 2){
+          spawnPlatforms2();
+          }
         }
+
+      if(frameCount % 120 === 0){
+        spawnPlatformsBreaking();
+      }  
+      
     }
        if(ground.y>800){
         ground.y = ground.height/2;
@@ -185,24 +202,48 @@ function draw() {
         platformsGroup.destroyEach();
       }
 
+      if(platformsGroup2.isTouching(spike1)){
+        platformsGroup2.destroyEach();
+      }
+
       if(platformsGroup.isTouching(spike2)){
         platformsGroup.destroyEach();
+      }
+      
+      if(platformsGroup2.isTouching(spike2)){
+        platformsGroup2.destroyEach();
       }
 
       if(platformsGroup.isTouching(spike3)){
         platformsGroup.destroyEach();
       }
 
+      if(platformsGroup2.isTouching(spike3)){
+        platformsGroup2.destroyEach();
+      }
+
       if(platformsGroup.isTouching(spike4)){
         platformsGroup.destroyEach();
+      }
+
+      if(platformsGroup2.isTouching(spike4)){
+        platformsGroup2.destroyEach();
       }
 
       if(platformsGroup.isTouching(spike5)){
         platformsGroup.destroyEach();
       }
+
+      if(platformsGroup2.isTouching(spike5)){
+        platformsGroup2.destroyEach();
+      }
       
       if(platformsGroup.isTouching(spike6)){
         platformsGroup.destroyEach();
+      }
+
+      if(platformsGroup2.isTouching(spike6)){
+        platformsGroup2.destroyEach();
       }
 
       if(platformsBreakingGroup.isTouching(spike1)){
@@ -247,7 +288,11 @@ function draw() {
     
        gameOver.addImage("GameOver", gameOverIMG);
 
-       reset();
+       if(mousePressedOver(gameOverIMG)){
+        gameState = START;
+        
+        
+      }
     }
 
 
@@ -296,16 +341,16 @@ function spawnPlatforms(){
 }
 
 function spawnPlatforms2(){
-  var platform = createSprite(Math.round(random(50,550)),0,10,40);
-  platform.velocityY = 4;
+  var platform2 = createSprite(Math.round(random(50,550)),0,10,40);
+  platform2.velocityY = 4;
   
-  platform.addImage("PlatformImg", platform1Img);
+  platform2.addImage("PlatformImg", platform1Img);
   
             
-  platform.scale = 0.3;
-  platform.lifetime = 260;
+  platform2.scale = 0.3;
+  platform2.lifetime = 260;
   
-  platformsGroup.add(platform);
+  platformsGroup2.add(platform2);
 
 }
 
@@ -371,11 +416,5 @@ function goRight(){
   if(keyCode === 39){
     ball.velocityX = 3;
     ball.velocityY = -5;
-  }
-}
-
-function reset(){
-  if(mousePressedOver === gameOver){
-    gameState = START;
   }
 }
