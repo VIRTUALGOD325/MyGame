@@ -17,6 +17,8 @@ var spike1IMG, spike2IMG, spike3IMG, spike4IMG, spike5IMG, spike6IMG;
 
 var platformsGroup, platformsGroup2, platformsBreakingGroup;
 
+var platformBottomGroup, platform2BottomGroup, platformBreakingBottomGroup;
+
 var platformTemp;
 
 var start,startIMG;
@@ -91,11 +93,16 @@ function setup() {
   platformsGroup2 = new Group();
   platformsBreakingGroup = new Group();
 
+  platformBottomGroup = new Group();
+  platform2BottomGroup = new Group();
+  platformBreakingBottomGroup = new Group();
+
   start = createSprite(270,280,10,10);
   start.addImage("START", startIMG);
 
 
   gameOver = createSprite(270,280,10,10);
+  gameOver.addImage("GameOver", gameOverIMG);
   
 }
 
@@ -113,6 +120,8 @@ function draw() {
 
       start.visible = true;
 
+      gameOver.visible = false;
+
       ground.velocityY = 0;
 
     }
@@ -120,9 +129,26 @@ function draw() {
 
       start.visible = false;
 
+      gameOver.visible = false;
+
+      if(keyDown('space')){
+        ball.velocityY = -10;
+      }
+
+      //Gravity
+      ball.velocityY = ball.velocityY + 0.8;
+
+      if(keyDown('left')){
+        ball.x = ball.x - 2;
+      }
+
+      if(keyDown('right')){
+        ball.x = ball.x + 2;
+      }
+
       ball.collide(platformTemp);
 
-      start.animation = false;
+     // start.animation = false;
 
       if(ball.isTouching(platformsGroup)){
         
@@ -132,6 +158,15 @@ function draw() {
         platformsGroup.velocityY=4;
       }
        
+      if(ball.isTouching(platformsGroup2)){
+        
+        ball.velocityX = 0;
+        ball.velocityY = 0;
+
+        platformsGroup.velocityY=4;
+      }
+       
+
       if(ball.isTouching(platformsBreakingGroup)){
         
        ball.velocityX = 0;
@@ -140,29 +175,26 @@ function draw() {
        platformsGroup.velocityY=4;
       }
      
-       ball.velocityY = ball.velocityY + 0.8;
-
       ground.velocityY = 3;
 
-      var selectPlatform = Math.round(random(1,2));
+      var selectPlatform = Math.round(random(1,3));
       if(frameCount % 60 === 0){
         if(selectPlatform === 1){
           spawnPlatforms();
         }
-        else{
-          if(selectPlatform === 2){
+        else if(selectPlatform === 2){
           spawnPlatforms2();
-          }
         }
+        else{
+          spawnPlatformsBreaking();
+        }       
+      }
 
-      if(frameCount % 120 === 0){
-        spawnPlatformsBreaking();
-      }  
-      
-    }
        if(ground.y>800){
         ground.y = ground.height/2;
        }
+
+       
 
        //if(spike1.y>550){
        // spike1.y = spike1.height/2;
@@ -174,27 +206,12 @@ function draw() {
        //}
 
 
-      if(ball.isTouching(spike1)){
+      if(ball.isTouching(spike1) || ball.isTouching(spike2) || ball.isTouching(spike3) 
+      || ball.isTouching(spike4) || ball.isTouching(spike5) || ball.isTouching(spike6) ){
         gameState = END;
       }
 
-      if(ball.isTouching(spike2)){
-        gameState = END;
-      }
-
-      if(ball.isTouching(spike3)){
-        gameState = END;
-      }
-
-      if(ball.isTouching(spike4)){
-        gameState = END;
-      }
-
-      if(ball.isTouching(spike5)){
-        gameState = END;
-      }
-
-      if(ball.isTouching(spike6)){
+      if(ball.isTouching(platformBottomGroup) || ball.isTouching(platform2BottomGroup) || ball.isTouching(platformBreakingBottomGroup)){
         gameState = END;
       }
 
@@ -281,16 +298,28 @@ function draw() {
        ball.velocityX = 0;
        ball.velocityY = 0;
 
+
+
        start.visible = false;
 
        platformsGroup.setVelocityYEach(0);
+       platformsGroup2.setVelocityYEach(0);
        platformsBreakingGroup.setVelocityYEach(0);
-    
-       gameOver.addImage("GameOver", gameOverIMG);
 
-       if(mousePressedOver(gameOverIMG)){
-        gameState = START;
+       platformBottomGroup.setLifetimeEach(-1);
+
+       platformBottomGroup.setVelocityYEach(0);
+       platform2BottomGroup.setVelocityYEach(0);
+       platformBreakingBottomGroup.setVelocityYEach(0);
+
+                                            
+    
+       gameOver.visible = true;     
+
+       if(mousePressedOver(gameOver)){
         
+         
+        reset();
         
       }
     }
@@ -302,9 +331,9 @@ function draw() {
 
   //jump();
 
-  goLeft();
+  //goLeft();
 
-  goRight();
+  //goRight();
 
 
   drawSprites();
@@ -313,7 +342,9 @@ function draw() {
     textSize(20);
       fill("white");
       text("WELCOME", 300, 200);
-      text("PRESS THE SPACE BAR KEY", 220,250 );
+      text("PRESS THE SPACE BAR KEY", 220,200 );
+      text("USE LEFT ARROW TO MOVE LEFT", 220,250 );
+      text("USE RIGHT ARROW TO MOVE RIGHT", 220,270 );
   }
 
  if(gameState === END){
@@ -328,7 +359,11 @@ function draw() {
 
 function spawnPlatforms(){
     var platform = createSprite(Math.round(random(50,550)),0,10,40);
+    var platformTop = createSprite(platform.x, platform.y-10, 10, 40);
+    var platformBottom = createSprite(platform.x, platform.y+15, 80, 10);
+    
     platform.velocityY = 4;
+    platformBottom.velocityY = 4;
     
     platform.addImage("PlatformImg", platform1Img);
     
@@ -336,13 +371,17 @@ function spawnPlatforms(){
     platform.scale = 0.3;
     platform.lifetime = 260;
     
+    platformBottomGroup.add(platformBottom);
     platformsGroup.add(platform);
   
 }
 
 function spawnPlatforms2(){
   var platform2 = createSprite(Math.round(random(50,550)),0,10,40);
+  var platform2Top = createSprite(platform2.x, platform2.y-10, 10, 40);
+  var platform2Bottom = createSprite(platform2.x, platform2.y+15, 80, 10);
   platform2.velocityY = 4;
+  platform2Bottom.velocityY = 4;
   
   platform2.addImage("PlatformImg", platform1Img);
   
@@ -351,13 +390,17 @@ function spawnPlatforms2(){
   platform2.lifetime = 260;
   
   platformsGroup2.add(platform2);
+  platform2BottomGroup.add(platform2Bottom);
 
 }
 
 function spawnPlatformsBreaking(){
   
     var platformBreaking = createSprite(Math.round(random(50,550)),0,10,40);
+    var platformBreakTop = createSprite(platformBreaking.x, platformBreaking.y-10, 10, 40);
+    var platformBreakBottom = createSprite(platformBreaking.x, platformBreaking.y+15, 80, 10);
     platformBreaking.velocityY = 4;
+    platformBreakBottom.velocityY = 4;
     
     platformBreaking.addImage("PlatformBreakingImg", platform2Img);
     
@@ -366,6 +409,7 @@ function spawnPlatformsBreaking(){
     platformBreaking.lifetime = 260;
     
     platformsBreakingGroup.add(platformBreaking);
+    platformBreakingBottomGroup.add(platformBreakBottom);
   
 }
 
@@ -404,17 +448,8 @@ function spawnPlatformsBreaking2(){
  // }
 //}
 
+function reset(){
+  gameState = PLAY;
 
-function goLeft(){
-  if(keyCode === 37){
-    ball.velocityX = -3;
-    ball.velocityY = -5;
-  }
-}
-
-function goRight(){
-  if(keyCode === 39){
-    ball.velocityX = 3;
-    ball.velocityY = -5;
-  }
+  platformBottomGroup.destroyEach();
 }
