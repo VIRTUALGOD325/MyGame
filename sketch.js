@@ -124,6 +124,8 @@ function draw() {
 
       ground.velocityY = 0;
 
+      
+
     }
     else if(gameState === PLAY){
 
@@ -217,51 +219,41 @@ function draw() {
 
       if(platformsGroup.isTouching(spike1)){
         platformsGroup.destroyEach();
-      }
-
-      if(platformsGroup2.isTouching(spike1)){
         platformsGroup2.destroyEach();
+        platformsBreakingGroup.destroyEach();
       }
 
       if(platformsGroup.isTouching(spike2)){
         platformsGroup.destroyEach();
-      }
-      
-      if(platformsGroup2.isTouching(spike2)){
         platformsGroup2.destroyEach();
+        platformsBreakingGroup.destroyEach();
       }
 
       if(platformsGroup.isTouching(spike3)){
         platformsGroup.destroyEach();
-      }
-
-      if(platformsGroup2.isTouching(spike3)){
         platformsGroup2.destroyEach();
+        platformsBreakingGroup.destroyEach();
       }
 
       if(platformsGroup.isTouching(spike4)){
         platformsGroup.destroyEach();
-      }
-
-      if(platformsGroup2.isTouching(spike4)){
         platformsGroup2.destroyEach();
+        platformsBreakingGroup.destroyEach();
       }
 
       if(platformsGroup.isTouching(spike5)){
         platformsGroup.destroyEach();
+        platformsGroup2.destroyEach();
+        platformsBreakingGroup.destroyEach();
       }
 
-      if(platformsGroup2.isTouching(spike5)){
-        platformsGroup2.destroyEach();
-      }
       
       if(platformsGroup.isTouching(spike6)){
         platformsGroup.destroyEach();
+        platformsGroup2.destroyEach();
+        platformsBottomGroup.destroyEach();
       }
 
-      if(platformsGroup2.isTouching(spike6)){
-        platformsGroup2.destroyEach();
-      }
 
       if(platformsBreakingGroup.isTouching(spike1)){
         platformsBreakingGroup.destroyEach();
@@ -341,18 +333,18 @@ function draw() {
  if(gameState === START){
     textSize(20);
       fill("white");
-      text("WELCOME", 300, 200);
-      text("PRESS THE SPACE BAR KEY", 220,200 );
-      text("USE LEFT ARROW TO MOVE LEFT", 220,250 );
-      text("USE RIGHT ARROW TO MOVE RIGHT", 220,270 );
+      text("WELCOME", 220, 180);
+      text("PRESS THE START BUTTON", 160,200 );
+      text("USE LEFT ARROW TO MOVE LEFT", 160,330 );
+      text("USE RIGHT ARROW TO MOVE RIGHT", 160,350 );
   }
 
  if(gameState === END){
    textSize(20);
-   fill("white");
-   text("GAME OVER", 260, 400);
-   text("PRESS GAME OVER", 240,450);
-   text("TO RESTART GAME", 240,480);
+     fill("white");
+     text("GAME OVER", 260, 400);
+     text("PRESS GAME OVER", 240,450);
+     text("TO RESTART GAME", 240,480);
  }
 }
 
@@ -451,5 +443,14 @@ function spawnPlatformsBreaking2(){
 function reset(){
   gameState = PLAY;
 
+  platformsGroup.destroyEach();
+  platformsGroup2.destroyEach();
+  platformsBreakingGroup.destroyEach();
+
   platformBottomGroup.destroyEach();
+  platform2BottomGroup.destroyEach();
+  platformBreakingBottomGroup.destroyEach();
+
+  ball.x = 150; 
+  ball.y = 500;
 }
